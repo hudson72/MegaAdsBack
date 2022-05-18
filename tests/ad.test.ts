@@ -1,4 +1,10 @@
 import {AdRecord} from "../records/adrecord";
+import {pool} from "../utils/db";
+import {AdEntity} from "../types";
+
+afterAll(async () => {
+    await pool.end()
+})
 
 test('AdRecord returns data from database for one entry', async () => {
     const ad = await AdRecord.getOne('abc');
@@ -15,9 +21,29 @@ test('AdRecord returns null from database for nonexistent entry', async () => {
 });
 
 test('AdRecord returns data from database for all entries', async () => {
-    const ad = await AdRecord.listAll();
+    const ads = await AdRecord.listAll('');
 
-    expect(ad).toBeDefined();
+    expect(ads[0].id).toBeDefined();
+    expect(ads).not.toEqual([]);
+});
+
+test('AdRecord returns an array of found entries when searching for letter "e" in the name', async () => {
+    const ads = await AdRecord.listAll('e');
+
+    expect(ads).toBeDefined();
+    expect(ads).not.toEqual([]);
+});
+
+test('AdRecord returns an empty array when searching for sth that does not exist', async () => {
+    const ads = await AdRecord.listAll('----------------');
+
+    expect(ads).toEqual([]);
+});
+
+test('AdRecord returns only chosen data', async () => {
+    const ads = await AdRecord.listAll('');
+
+    expect((ads[0] as AdEntity).price).toBeUndefined();
 });
 
 test('Inserted AdRecord should have an id', async () => {
