@@ -2,6 +2,15 @@ import {AdRecord} from "../records/adrecord";
 import {pool} from "../utils/db";
 import {AdEntity} from "../types";
 
+const defaultObj = {
+    name: 'test3',
+    description: 'aaaaaaaa',
+    price: 3,
+    url: 'http://megak.pl',
+    lat: 50.4736473,
+    lon: 20.8765745,
+}
+
 afterAll(async () => {
     await pool.end()
 })
@@ -48,18 +57,24 @@ test('AdRecord returns only chosen data', async () => {
 
 test('Inserted AdRecord should have an id', async () => {
 
-    const newAd = new AdRecord({
-        name: 'test3',
-        description: 'aaaaaaaa',
-        price: 3,
-        url: 'http://megak.pl',
-        lat: 50.4736473,
-        lon: 20.8765745
-    });
+    const newAd = new AdRecord(defaultObj);
 
     await newAd.insert();
 
     expect(newAd.id).toBeDefined();
     /*Poniżej sprawdzamy czy nasze id jest poprawnym uuid*/
     expect(newAd.id).toMatch(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/)
+});
+
+test('AdRecord.insert inserts data to database', async () => {
+
+    const newAd = new AdRecord(defaultObj);
+
+    await newAd.insert();
+
+    const foundAd = await AdRecord.getOne(newAd.id);
+
+    expect(foundAd).toBeDefined();
+    expect(foundAd).not.toBeNull();
+    expect(foundAd.id).toBe(newAd.id);
 });
