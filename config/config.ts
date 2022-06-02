@@ -1,7 +1,7 @@
 export const config = {
     dbHost: 'localhost',
-    dbUser: 'root',
-    dbPassword: '',
-    dbDatabase: 'megakads',
-    corsOrigin: 'http://localhost:3000',
+    dbUser: 'megakiin_api',
+    dbPassword: '3gwP5A8S',
+    dbDatabase: 'megakiin_api',
+    corsOrigin: 'http://megakii.networkmanager.pl',
 };
